@@ -1,0 +1,555 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>gulp.js - DevMeetupK #02</title>
+    <meta name="description" content="Introduction to FsReveal">
+    <meta name="author" content="Karlkim Suwanmongkol">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/night.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://localhost:8083/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+
+<p><img src="images/gulp.svg" alt="Gulp" /></p>
+
+<h3>the streaming build system</h3>
+
+<p>Sebastian Burgstaller</p>
+
+<p><a href="https://twitter.com/seburgi">@seburgi</a> - <a href="http://seburgi.com">seburgi.com</a></p>
+
+</section>
+
+<section >
+
+<h3>Was ist Gulp.js?</h3>
+
+<ul>
+<li>Tool zur Automatisierung von oft ausgeführten Tasks</li>
+<li>Alternative zu Grunt</li>
+<li>Ideal für Continuous Integration</li>
+</ul>
+
+</section>
+
+<section >
+
+<h3>Anwendungsbereiche</h3>
+
+<ul>
+<li>Unit Tests</li>
+<li>Transpilieren von TypeScript, ES6</li>
+<li>Minification</li>
+<li>Concatenation</li>
+<li>Kompilieren von LESS nach CSS</li>
+<li>JS / CSS Code Analyse</li>
+<li>Hot-Reload</li>
+<li>Vendor prefixes</li>
+<li>Dateien in HTML injecten</li>
+</ul>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>Was unterscheidet Gulp von Grunt?</h3>
+
+<ul>
+<li>Code over Configuration</li>
+<li>Gulp Task === JavaScript code</li>
+<li>Streambasierte Verarbeitung von Dateien</li>
+</ul>
+
+<p><img src="images/grunt.png" alt="Grunt" />
+<img src="images/gulp-glass.png" alt="Gulp" /></p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Dateibasierte Verarbeitung (Grunt)</h3>
+
+<br>
+<br>
+
+<p><img src="images/file-based.png" alt="Dateibasierte Verarbeitung (Grunt)" /></p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Streambasierte Verarbeitung (Gulp)</h3>
+
+<br>
+<br>
+
+<p><img src="images/stream-based.png" alt="Streambasierte Verarbeitung (Gulp)" /></p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Nochmal für visuelle Typen</h3>
+
+<p><img src="images/grunt.png" alt="Grunt" />
+<img src="images/ineffcient.jpg" alt="Grunt" /></p>
+
+<p><img src="images/gulp-glass.png" alt="Gulp" />
+<img src="images/homer-stream.gif" alt="Gulp" /></p>
+
+</section>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>Vorbereitungen</h3>
+
+<ul>
+<li>Kenntnisse in JavaScript</li>
+<li>Node.js installieren</li>
+<li>Text-Editor, oder IDE</li>
+</ul>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Node.js unter Windows</h3>
+
+<p>Chocolatey installieren (<a href="https://chocolatey.org"><a href="https://chocolatey.org">https://chocolatey.org</a></a>)</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="o">@</span><span class="i">powershell</span> <span class="o">-</span><span class="i">NoProfile</span> <span class="o">-</span><span class="i">ExecutionPolicy</span> <span class="i">Bypass</span> <span class="o">-</span><span class="i">Command</span> 
+    <span class="s">&quot;iex ((new-object net.webclient).DownloadString(&#39;https://chocolatey.org/install.ps1&#39;))&quot;</span> <span class="o">&amp;&amp;</span> 
+    <span class="i">SET</span> <span class="i">PATH</span><span class="o">=%</span><span class="i">PATH</span><span class="o">%</span>;<span class="o">%</span><span class="i">ALLUSERSPROFILE</span><span class="o">%</span>
+</code></pre></td>
+</tr>
+</table>
+
+<p>Node.js mit Chocolatey installieren</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">choco</span> <span class="i">install</span> <span class="i">node</span><span class="o">.</span><span class="i">install</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Node.js unter Ubuntu</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">sudo</span> <span class="i">apt</span><span class="o">-</span><span class="i">get</span> <span class="i">update</span>
+<span class="i">sudo</span> <span class="i">apt</span><span class="o">-</span><span class="i">get</span> <span class="i">install</span> <span class="i">nodejs</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Node.js unter Mac OS X</h3>
+
+<p>Homebrew installieren (<a href="http://brew.sh/"><a href="http://brew.sh/">http://brew.sh/</a></a>)</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">ruby</span> <span class="o">-</span><span class="i">e</span> <span class="s">&quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+
+<p>Node.js mit Homebrew installieren</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">brew</span> <span class="i">install</span> <span class="i">node</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Gulp mit NPM installieren</h3>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">npm</span> <span class="i">install</span> <span class="i">gulp</span> <span class="o">-</span><span class="i">D</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h3>Gulp Datei erstellen</h3>
+
+<p>Minimalbeispiel für gulpfile.js:</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js"><span class="k">var</span> gulp <span class="o">=</span> require(<span class="s">'gulp'</span>);
+
+gulp.task(<span class="s">'default'</span>, <span class="k">function</span>() {
+        console.log(<span class="s">"Gulp!"</span>);
+    });
+</code></pre></td></tr></table>
+
+<p>Hier der Output:</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">d</span><span class="o">:</span><span class="o">/</span><span class="i">dev</span><span class="o">/</span><span class="i">gulp</span><span class="o">.</span><span class="i">simple</span><span class="o">&gt;</span> <span class="i">gulp</span>
+[<span class="n">15</span><span class="o">:</span><span class="n">09</span><span class="o">:</span><span class="n">01</span>] <span class="i">Using</span> <span class="i">gulpfile</span> <span class="i">d</span><span class="o">:</span><span class="o">/</span><span class="i">dev</span><span class="o">/</span><span class="i">gulp</span><span class="o">.</span><span class="i">simple</span><span class="o">/</span><span class="i">gulpfile</span><span class="o">.</span><span class="i">js</span>
+[<span class="n">15</span><span class="o">:</span><span class="n">09</span><span class="o">:</span><span class="n">01</span>] <span class="i">Starting</span> <span class="o">&#39;</span><span class="i">default&#39;</span><span class="o">..</span><span class="o">.</span>
+<span class="i">Gulp!</span>
+[<span class="n">15</span><span class="o">:</span><span class="n">09</span><span class="o">:</span><span class="n">01</span>] <span class="i">Finished</span> <span class="o">&#39;</span><span class="i">default&#39;</span> <span class="i">after</span> <span class="n">361</span> <span class="i">μs</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+</section>
+
+<section >
+
+<h3>Die 4 Api Methoden von Gulp</h3>
+
+<ul>
+<li>gulp.task</li>
+<li>gulp.src</li>
+<li>gulp.dest</li>
+<li>gulp.watch</li>
+</ul>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>1. gulp.task</h3>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<p>gulp.task(name [, dep], fn)</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'default'</span>, <span class="k">function</span>() {
+    console.log(<span class="s">"Gulp!"</span>);
+});
+</code></pre></td></tr></table>
+
+<p>Registriert einen neuen Gulp Task. Optional können Tasks definiert werden die vorher ausgeführt werden müssen.</p>
+
+<p>Der Task <code>default</code> wird dann aufgerufen, wenn man Gulp ohne Argumente aufruft.</p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h2>DEMO</h2>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<p>gulp.task(name [, dep], fn)</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'js'</span>, [<span class="s">'clean'</span>, <span class="s">'jshint'</span>], <span class="k">function</span>() {
+    console.log(<span class="s">"Gulp!"</span>);
+});
+</code></pre></td></tr></table>
+
+<p>Die Gulp Tasks <code>clean</code> und <code>jshint</code> werden vor <code>js</code> ausgeführt.</p>
+
+<br>
+
+<p>Wird folgendermaßen aufgerufen:</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">d</span><span class="o">:</span><span class="o">/</span><span class="i">dev</span><span class="o">/</span><span class="i">gulp</span><span class="o">.</span><span class="i">simple</span><span class="o">&gt;</span> <span class="i">gulp</span> <span class="i">js</span>
+</code></pre></td>
+</tr>
+</table>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h1>!</h1>
+
+<p>Dependency Tasks werden parallelisiert ausgeführt.</p>
+
+<p>Die Reihenfolge der Elemente im Array hat keine Bedeutung.</p>
+
+</section>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>2. gulp.src</h3>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<p>gulp.src(glob, [, options])</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'js'</span>, <span class="k">function</span>() {
+    <span class="k">return</span> gulp
+        .src(<span class="s">'./src/**/*.js'</span>)
+        .pipe(concat(<span class="s">'app.all.js'</span>))
+        .pipe(gulp.dest(<span class="s">'./build/'</span>));
+    });
+</code></pre></td></tr></table>
+
+<p><a href="https://github.com/isaacs/node-glob">https://github.com/isaacs/node-glob</a></p>
+
+<p>Gibt einen lesbaren Stream der entsprechenden Dateien zurück.</p>
+
+</section>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>3. gulp.dest</h3>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<p>gulp.dest(path [, options])</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'js'</span>, <span class="k">function</span>() {
+    <span class="k">return</span> gulp
+        .src(<span class="s">'./src/**/*.js'</span>)
+        .pipe(concat(<span class="s">'app.all.js'</span>))
+        .pipe(gulp.dest(<span class="s">'./build/'</span>));
+    });
+</code></pre></td></tr></table>
+
+<p>Gibt einen beschreibbaren Stream zurück. Datei-Objekte die in diesen Stream gepiped werden, landen auf der Festplatte.</p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h2>DEMO</h2>
+
+</section>
+
+</section>
+
+<section >
+
+<section >
+
+<h3>4. gulp.watch</h3>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<p>gulp.watch(glob [, opts], tasks || func)</p>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'js-watcher'</span>, <span class="k">function</span>() {
+    gulp.watch([<span class="s">'js/**/*.js'</span>], [<span class="s">'js'</span>]);
+});
+</code></pre></td></tr></table>
+
+<h1></h1>
+
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="js">gulp.task(<span class="s">'js-watcher'</span>, <span class="k">function</span>() {
+    gulp.watch(<span class="s">'js/**/*.js'</span>, <span class="k">function</span>(<span class="k">event</span>) {
+        console.log(<span class="s">'File '</span> <span class="o">+</span> <span class="k">event</span>.path <span class="o">+</span> ' was ' <span class="o">+</span> <span class="k">event</span>.type <span class="o">+</span> <span class="s">'.'</span>);
+    });
+}
+</code></pre></td></tr></table>
+
+<p>Überwacht das Dateisystem und triggert Tasks, wenn Änderungen erkannt werden.</p>
+
+</section>
+
+<section author="Karlkim Suwanmongkol" description="Introduction to FsReveal" theme="night" title="gulp.js - DevMeetupK #02" transition="default">
+
+<h2>DEMO</h2>
+
+</section>
+
+</section>
+
+<section >
+
+<h3>Jetzt kennen wir alle Methoden von Gulp</h3>
+
+<h3>Fragen? :-)</h3>
+
+<p><img src="images/homer_hammer.jpg" alt="Homer being Homer" /></p>
+
+</section>
+
+<section >
+
+<h2>Viel Spaß beim Ausprobieren!</h2>
+
+<ul>
+<li>Gulp: <a href="http://gulpjs.com/">http://gulpjs.com/</a></li>
+<li>Gulp Plugins: <a href="http://gulpjs.com/plugins/">http://gulpjs.com/plugins/</a></li>
+<li>Komplexes Beispiel: <a href="https://github.com/johnpapa/gulp-patterns">https://github.com/johnpapa/gulp-patterns</a></li>
+<li>Folien und Demos: <a href="https://github.com/seburgi/devmeetupk">https://github.com/seburgi/devmeetupk</a></li>
+<li>FsReveal: <a href="https://github.com/fsprojects/FsReveal">https://github.com/fsprojects/FsReveal</a></li>
+</ul>
+
+<p>Sebastian Burgstaller</p>
+
+<p><a href="https://twitter.com/seburgi">@seburgi</a> - <a href="http://seburgi.com">seburgi.com</a></p>
+
+</section>
+
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+

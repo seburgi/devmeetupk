@@ -1,0 +1,10 @@
+body {
+    background-image: url(img/Kotlin_logo.png);
+    background-size: 5%;
+    background-repeat: no-repeat;
+    background-position: 1% 2%;
+}
+
+.reveal.overview .slides section:hover, .reveal.overview .slides section.present {
+    outline-color: #6ca0e8;
+}
